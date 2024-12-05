@@ -31,8 +31,8 @@ func (s *Server) setupRouter() *http.ServeMux {
 	router.Handle("/", http.FileServer(web.Dist()))
 	limiter := NewLimiter(s.cfg.proxyCount, time.Duration(s.cfg.interval)*time.Minute)
 	hcaptcha := NewCaptcha(s.cfg.hcaptchaSiteKey, s.cfg.hcaptchaSecret)
-	router.Handle("/api/claim", negroni.New(limiter, hcaptcha, negroni.Wrap(s.handleClaim())))
-	router.Handle("/api/info", s.handleInfo())
+	router.Handle("/api/claim", CORSMiddleware(negroni.New(limiter, hcaptcha, negroni.Wrap(s.handleClaim()))))
+	router.Handle("/api/info", CORSMiddleware(s.handleInfo()))
 
 	return router
 }
